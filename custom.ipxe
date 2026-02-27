@@ -1,12 +1,57 @@
 #!ipxe
 ###
-### netboot.xyz-custom menu
+### Quick Picks - lnxd
 ###
 
-:start
-echo Hello world!
-sleep 10
-goto custom_exit
+:custom
+clear custom_choice
+set space:hex 20:20
+set space ${space:string}
+menu Quick Picks
+item --gap -- Install:
+item debian ${space} Debian (Network Installer)
+item archlinux ${space} Arch Linux
+item windows ${space} Windows 11
+item --gap -- Live:
+item live-tails ${space} Tails
+item --gap -- Utilities:
+item memtest ${space} Memtest86+
+item gparted ${space} GParted
+item shredos ${space} ShredOS
+item supergrub ${space} Super Grub2 Disk
+item --gap --
+item return ${space} Return to Main Menu
+choose --default return --timeout 0 custom_choice || goto custom_exit
+echo ${cls}
+goto ${custom_choice}
+
+:debian
+chain tftp://${next-server}/debian.ipxe || goto custom
+
+:archlinux
+chain tftp://${next-server}/archlinux.ipxe || goto custom
+
+:windows
+chain tftp://${next-server}/windows.ipxe || goto custom
+
+:live-tails
+chain tftp://${next-server}/live-tails.ipxe || goto custom
+
+:shredos
+chain tftp://${next-server}/shredos.ipxe || goto custom
+
+:gparted
+chain tftp://${next-server}/gparted.ipxe || goto custom
+
+:memtest
+imgfree
+kernel ${live_endpoint}/asset-mirror/releases/download/8.00-32a14678/mt86p_x86_64
+boot || goto custom
+
+:supergrub
+imgfree
+kernel ${live_endpoint}/asset-mirror/releases/download/2.06s4-30515aca/supergrub2-classic-x86_64.efi
+boot || goto custom
 
 :custom_exit
 exit 0
