@@ -32,7 +32,13 @@ chain tftp://${next-server}/debian.ipxe || goto custom
 chain tftp://${next-server}/archlinux.ipxe || goto custom
 
 :windows
-chain tftp://${next-server}/windows.ipxe || goto custom
+imgfree
+kernel http://10.1.100.232:80/WinPE/wimboot
+initrd -n bootmgr.efi http://10.1.100.232:80/WinPE/x64/bootmgr.efi bootmgr.efi
+initrd -n bcd         http://10.1.100.232:80/WinPE/x64/boot/bcd     bcd
+initrd -n boot.sdi    http://10.1.100.232:80/WinPE/x64/boot/boot.sdi boot.sdi
+initrd -n boot.wim    http://10.1.100.232:80/WinPE/x64/sources/boot.wim boot.wim
+boot || goto custom
 
 :live-tails
 chain tftp://${next-server}/live-tails.ipxe || goto custom
